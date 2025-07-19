@@ -208,6 +208,165 @@
             color: #ffeb3b;
         }
 
+        /* 模式切换 */
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+        .mode-btn {
+            padding: 8px 20px;
+            border: none;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .mode-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+        }
+
+        /* 定时器设置 */
+        .timer-settings {
+            display: none;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .timer-settings.active {
+            display: block;
+        }
+
+        .time-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .time-input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .time-input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .time-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .time-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .preset-times {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* 定时器完成提示 */
+        .timer-finished {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: pulse 1s infinite;
+        }
+
+        .timer-finished.active {
+            display: flex;
+        }
+
+        .timer-finished-content {
+            text-align: center;
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
+        /* 主题适配 */
+        body.light-theme .time-input {
+            color: #2d3436;
+            background: rgba(45, 52, 54, 0.1);
+            border-color: rgba(45, 52, 54, 0.3);
+        }
+
+        body.light-theme .time-input:focus {
+            background: rgba(45, 52, 54, 0.2);
+            border-color: rgba(45, 52, 54, 0.6);
+        }
+
+        body.light-theme .mode-btn {
+            color: #2d3436;
+        }
+
+        body.light-theme .preset-btn {
+            color: #2d3436;
+            border-color: rgba(45, 52, 54, 0.3);
+            background: rgba(45, 52, 54, 0.1);
+        }
+
+        body.light-theme .preset-btn:hover {
+            background: rgba(45, 52, 54, 0.2);
+        }
+
         @media (max-width: 480px) {
             .timer-display {
                 font-size: 2em;
@@ -238,6 +397,43 @@
         <h1 class="title">ADClock</h1>
         <p class="studio">大黑子工作室制作</p>
         
+        <!-- 模式切换 -->
+        <div class="mode-toggle">
+            <button class="mode-btn active" id="stopwatchMode" onclick="switchMode('stopwatch')">计时器</button>
+            <button class="mode-btn" id="timerMode" onclick="switchMode('timer')">定时器</button>
+        </div>
+        
+        <!-- 定时器设置 -->
+        <div class="timer-settings" id="timerSettings">
+            <div class="time-inputs">
+                <div class="time-input-group">
+                    <input type="number" class="time-input" id="hoursInput" min="0" max="23" value="0">
+                    <span class="time-label">时</span>
+                </div>
+                <div class="time-input-group">
+                    <input type="number" class="time-input" id="minutesInput" min="0" max="59" value="5">
+                    <span class="time-label">分</span>
+                </div>
+                <div class="time-input-group">
+                    <input type="number" class="time-input" id="secondsInput" min="0" max="59" value="0">
+                    <span class="time-label">秒</span>
+                </div>
+                <div class="time-input-group">
+                    <input type="number" class="time-input" id="millisecondsInput" min="0" max="999" value="0">
+                    <span class="time-label">毫秒</span>
+                </div>
+            </div>
+            <div class="preset-times">
+                <button class="preset-btn" onclick="setPresetTime(0, 0, 30, 0)">30秒</button>
+                <button class="preset-btn" onclick="setPresetTime(0, 1, 0, 0)">1分钟</button>
+                <button class="preset-btn" onclick="setPresetTime(0, 3, 0, 0)">3分钟</button>
+                <button class="preset-btn" onclick="setPresetTime(0, 5, 0, 0)">5分钟</button>
+                <button class="preset-btn" onclick="setPresetTime(0, 10, 0, 0)">10分钟</button>
+                <button class="preset-btn" onclick="setPresetTime(0, 25, 0, 0)">25分钟</button>
+                <button class="preset-btn" onclick="setPresetTime(1, 0, 0, 0)">1小时</button>
+            </div>
+        </div>
+        
         <div class="timer-display" id="timerDisplay">
             00:00:00<span class="milliseconds">.000</span>
         </div>
@@ -248,17 +444,37 @@
             <button class="btn btn-reset" id="resetBtn" onclick="resetTimer()">重置</button>
         </div>
     </div>
+    
+    <!-- 定时器完成提示 -->
+    <div class="timer-finished" id="timerFinished">
+        <div class="timer-finished-content">
+            <div>⏰ 时间到！</div>
+            <div style="font-size: 0.6em; margin-top: 10px;">点击任意位置关闭</div>
+        </div>
+    </div>
 
     <script>
+        // 全局变量
         let startTime = 0;
         let elapsedTime = 0;
         let timerInterval = null;
         let isRunning = false;
-
+        let currentMode = 'stopwatch'; // 'stopwatch' 或 'timer'
+        let countdownTime = 0; // 倒计时总时间（毫秒）
+        let remainingTime = 0; // 剩余时间（毫秒）
+        let audioContext = null;
+        
+        // DOM 元素
         const timerDisplay = document.getElementById('timerDisplay');
         const startBtn = document.getElementById('startBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         const resetBtn = document.getElementById('resetBtn');
+        const timerSettings = document.getElementById('timerSettings');
+        const timerFinished = document.getElementById('timerFinished');
+        const hoursInput = document.getElementById('hoursInput');
+        const minutesInput = document.getElementById('minutesInput');
+        const secondsInput = document.getElementById('secondsInput');
+        const millisecondsInput = document.getElementById('millisecondsInput');
 
         function formatTime(milliseconds) {
             const totalSeconds = Math.floor(milliseconds / 1000);
@@ -271,13 +487,121 @@
         }
 
         function updateDisplay() {
-            const currentTime = Date.now();
-            const totalElapsed = elapsedTime + (currentTime - startTime);
-            timerDisplay.innerHTML = formatTime(totalElapsed);
+            if (currentMode === 'stopwatch') {
+                const currentTime = Date.now();
+                const totalElapsed = elapsedTime + (currentTime - startTime);
+                timerDisplay.innerHTML = formatTime(totalElapsed);
+            } else {
+                // 定时器模式
+                const currentTime = Date.now();
+                const elapsed = elapsedTime + (currentTime - startTime);
+                remainingTime = Math.max(0, countdownTime - elapsed);
+                
+                if (remainingTime <= 0) {
+                    // 时间到了
+                    timerFinished.classList.add('active');
+                    playAlarm();
+                    resetTimer();
+                    return;
+                }
+                
+                timerDisplay.innerHTML = formatTime(remainingTime);
+            }
+        }
+        
+        // 模式切换
+        function switchMode(mode) {
+            if (isRunning) {
+                resetTimer();
+            }
+            
+            currentMode = mode;
+            const stopwatchBtn = document.getElementById('stopwatchMode');
+            const timerBtn = document.getElementById('timerMode');
+            
+            if (mode === 'stopwatch') {
+                stopwatchBtn.classList.add('active');
+                timerBtn.classList.remove('active');
+                timerSettings.classList.remove('active');
+                timerDisplay.innerHTML = '00:00:00<span class="milliseconds">.000</span>';
+            } else {
+                timerBtn.classList.add('active');
+                stopwatchBtn.classList.remove('active');
+                timerSettings.classList.add('active');
+                updateTimerFromInputs();
+            }
+            
+            // 保存模式设置
+            localStorage.setItem('adclock-mode', mode);
+        }
+        
+        // 从输入框更新定时器时间
+        function updateTimerFromInputs() {
+            const hours = parseInt(hoursInput.value) || 0;
+            const minutes = parseInt(minutesInput.value) || 0;
+            const seconds = parseInt(secondsInput.value) || 0;
+            const milliseconds = parseInt(millisecondsInput.value) || 0;
+            
+            countdownTime = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds;
+            remainingTime = countdownTime;
+            
+            if (currentMode === 'timer') {
+                timerDisplay.innerHTML = formatTime(countdownTime);
+            }
+            
+            // 保存定时器设置
+            saveTimerSettings();
+        }
+        
+        // 设置预设时间
+        function setPresetTime(hours, minutes, seconds, milliseconds) {
+            hoursInput.value = hours;
+            minutesInput.value = minutes;
+            secondsInput.value = seconds;
+            millisecondsInput.value = milliseconds;
+            updateTimerFromInputs();
+        }
+        
+        // 播放提醒音
+        function playAlarm() {
+            try {
+                // 创建音频上下文
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // 播放提醒音（简单的蜂鸣声）
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.5);
+                    }, i * 600);
+                }
+            } catch (e) {
+                console.log('无法播放提醒音:', e);
+            }
         }
 
         function startTimer() {
             if (!isRunning) {
+                if (currentMode === 'timer') {
+                    updateTimerFromInputs();
+                    if (countdownTime <= 0) {
+                        alert('请设置定时器时间！');
+                        return;
+                    }
+                }
+                
                 startTime = Date.now();
                 isRunning = true;
                 
@@ -307,10 +631,50 @@
             startTime = 0;
             clearInterval(timerInterval);
             
-            timerDisplay.innerHTML = '00:00:00<span class="milliseconds">.000</span>';
+            if (currentMode === 'stopwatch') {
+                timerDisplay.innerHTML = '00:00:00<span class="milliseconds">.000</span>';
+            } else {
+                updateTimerFromInputs();
+            }
+            
             startBtn.textContent = '开始';
             startBtn.disabled = false;
             pauseBtn.disabled = true;
+        }
+        
+        // 保存定时器设置
+        function saveTimerSettings() {
+            const settings = {
+                hours: hoursInput.value,
+                minutes: minutesInput.value,
+                seconds: secondsInput.value,
+                milliseconds: millisecondsInput.value
+            };
+            localStorage.setItem('adclock-timer-settings', JSON.stringify(settings));
+        }
+        
+        // 加载定时器设置
+        function loadTimerSettings() {
+            const saved = localStorage.getItem('adclock-timer-settings');
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+                    hoursInput.value = settings.hours || 0;
+                    minutesInput.value = settings.minutes || 5;
+                    secondsInput.value = settings.seconds || 0;
+                    millisecondsInput.value = settings.milliseconds || 0;
+                } catch (e) {
+                    console.log('加载定时器设置失败:', e);
+                }
+            }
+        }
+        
+        // 加载保存的模式
+        function loadSavedMode() {
+            const savedMode = localStorage.getItem('adclock-mode');
+            if (savedMode && (savedMode === 'stopwatch' || savedMode === 'timer')) {
+                switchMode(savedMode);
+            }
         }
 
         // 键盘快捷键支持
@@ -332,7 +696,39 @@
                     event.preventDefault();
                     toggleTheme();
                     break;
+                case 'KeyM':
+                    event.preventDefault();
+                    switchMode(currentMode === 'stopwatch' ? 'timer' : 'stopwatch');
+                    break;
+                case 'Escape':
+                    event.preventDefault();
+                    if (timerFinished.classList.contains('active')) {
+                        timerFinished.classList.remove('active');
+                    }
+                    break;
             }
+        });
+        
+        // 定时器完成提示点击关闭
+        timerFinished.addEventListener('click', function() {
+            timerFinished.classList.remove('active');
+        });
+        
+        // 输入框变化监听
+        [hoursInput, minutesInput, secondsInput, millisecondsInput].forEach(input => {
+            input.addEventListener('input', function() {
+                // 限制输入范围
+                const value = parseInt(this.value);
+                const max = parseInt(this.max);
+                const min = parseInt(this.min);
+                
+                if (value > max) this.value = max;
+                if (value < min) this.value = min;
+                
+                if (currentMode === 'timer' && !isRunning) {
+                    updateTimerFromInputs();
+                }
+            });
         });
 
         // 主题切换功能
@@ -390,6 +786,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('ADClock 精确计时器已加载 - 大黑子工作室制作');
             loadSavedTheme();
+            loadTimerSettings();
+            loadSavedMode();
+            
+            // 如果是定时器模式，更新显示
+            if (currentMode === 'timer') {
+                updateTimerFromInputs();
+            }
         });
     </script>
 </body>
